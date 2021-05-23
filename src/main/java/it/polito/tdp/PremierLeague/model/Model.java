@@ -18,6 +18,9 @@ public class Model {
 	private PremierLeagueDAO dao;
 	private Map<Integer, Player> idMap;
 	
+	private Integer gradoMigliore;
+	private List<Player> dreamTeam;
+	
 	public Model() {
 		dao = new PremierLeagueDAO();
 		idMap= new HashMap <Integer, Player>();
@@ -71,5 +74,57 @@ public class Model {
 		return top;
 		
 	}
+	
+	public List<Player> getDreamTeam(int k) {
+		this.gradoMigliore=0;
+		this.dreamTeam= new ArrayList<>();
+		List<Player> parziale = new ArrayList<>();
+		
+		cerca(parziale, new ArrayList<Player>(this.grafo.vertexSet()),k);
+		return dreamTeam;
+	}
 
+	private void cerca(List<Player> parziale, List<Player> players, int k) {
+		//condizione di terminazione
+		if (parziale.size()==k) {
+			int grado =getGrado(parziale);
+			if (grado>gradoMigliore) {
+				gradoMigliore =grado;
+				dreamTeam = new ArrayList<>(parziale);
+			}
+			return;
+		}
+		
+		for (Player p: players) {
+			if (!parziale.contains(p)) {
+				parziale.add(p);
+				List<Player> restanti = new ArrayList<>(players);
+				restanti.removeAll(Graphs.successorListOf(grafo, p));
+				cerca(parziale, restanti, k);
+				parziale.remove(parziale.size()-1);
+			}
+		}
+		
+	}
+
+	private int getGrado(List<Player> parziale) {
+		int grado =0;
+		int piu=0;
+		int meno=0;
+		for (Player p: parziale) {
+			for (DefaultWeightedEdge e: grafo.outgoingEdgesOf(p)) 
+				piu+=grafo.getEdgeWeight(e);
+			for (DefaultWeightedEdge e: grafo.incomingEdgesOf(p))
+				meno+=grafo.getEdgeWeight(e);
+			
+			grado += piu-meno;
+		}
+		return grado;
+	}
+	
+	public Integer getGradoMigliore() {
+		return gradoMigliore;
+	}
+
+	
 }

@@ -5,10 +5,12 @@
 package it.polito.tdp.PremierLeague;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.PremierLeague.model.Avversari;
 import it.polito.tdp.PremierLeague.model.Model;
+import it.polito.tdp.PremierLeague.model.Player;
 import it.polito.tdp.PremierLeague.model.TopPlayer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -69,13 +71,32 @@ public class FXMLController {
 
     @FXML
     void doDreamTeam(ActionEvent event) {
-
+    	txtResult.clear();
+    	String k = txtK.getText();
+    	int numG;
+    	if (k==null) {
+    		txtResult.appendText("Inserisci i valori di input!");
+    		return;
+    	}
+    	try {
+    		numG= Integer.parseInt(k);
+    		
+    	}catch (NumberFormatException e) {
+    		txtResult.setText("Inserisci un valore numerico");
+    		return;
+    	}
+    	List<Player> dreamTeam = model.getDreamTeam(numG);
+    	
+    	for (Player p: dreamTeam) {
+    		txtResult.appendText(p.toString()+"\n");
+    	}
+    	txtResult.appendText("GRADO DI TITOLARITA': "+ model.getGradoMigliore());
     }
 
     @FXML
     void doTopPlayer(ActionEvent event) {
     	
-    	 txtResult.clear();
+    	txtResult.clear();
     	 
      	TopPlayer top = model.getTopPlayer();
      	if(top == null) {
