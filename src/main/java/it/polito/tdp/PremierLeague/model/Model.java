@@ -37,8 +37,8 @@ public class Model {
 			if (this.grafo.containsVertex(a.getP1()) && this.grafo.containsVertex(a.getP2())) {
 				if (a.getSum1()>a.getSum2() && (a.getSum1()-a.getSum2())>0)
 					Graphs.addEdgeWithVertices(grafo, a.getP1(), a.getP2(), a.getSum1()-a.getSum2());
-				else if (a.getSum2()>a.getSum1() && a.getSum2()-a.getSum1()>0)
-					Graphs.addEdgeWithVertices(grafo, a.getP2(), a.getP1(), a.getSum1()-a.getSum2());
+				else if (a.getSum2()>a.getSum1() && (a.getSum2()-a.getSum1())>0)
+					Graphs.addEdgeWithVertices(grafo, a.getP2(), a.getP1(), a.getSum2()-a.getSum1());
 			}
 		}
 		System.out.format("Grafo creato con %d vertici e %d archi\n",
@@ -55,15 +55,17 @@ public class Model {
 	
 	public TopPlayer getTopPlayer() {
 		Integer max=0;
-		Player best =null;
+		//Player best =null;
+		TopPlayer top = new TopPlayer();
 		for (Player p: grafo.vertexSet()) {
 			if (grafo.outDegreeOf(p)>max) {
 				max=grafo.outDegreeOf(p);
-				best=p;
+				// best=p;
+				top.setP(p);
 			}
 		}
-		TopPlayer top = new TopPlayer();
-		top.setP(best);
+		
+		
 		List<Avversari> avversari = new ArrayList<>();
 		for (DefaultWeightedEdge e: grafo.outgoingEdgesOf(top.getP())) {
 				avversari.add(new Avversari (grafo.getEdgeTarget(e),(int) grafo.getEdgeWeight(e)));
@@ -85,7 +87,7 @@ public class Model {
 	}
 
 	private void cerca(List<Player> parziale, List<Player> players, int k) {
-		//condizione di terminazione
+		//CASO TERMINALE
 		if (parziale.size()==k) {
 			int grado =getGrado(parziale);
 			if (grado>gradoMigliore) {
